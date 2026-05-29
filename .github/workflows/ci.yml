@@ -1,0 +1,69 @@
+name: CI
+
+on:
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: '17'
+                  cache: gradle
+
+            - name: Make Gradle wrapper executable
+              run: chmod +x ./gradlew
+
+            - name: Compile classes
+              run: ./gradlew classes --no-daemon
+
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: '17'
+                  cache: gradle
+
+            - name: Make Gradle wrapper executable
+              run: chmod +x ./gradlew
+
+            - name: Run tests
+              run: ./gradlew test --no-daemon
+
+    format:
+        name: Format
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: '17'
+                  cache: gradle
+
+            - name: Make Gradle wrapper executable
+              run: chmod +x ./gradlew
+
+            - name: Check formatting
+              run: ./gradlew spotlessCheck --no-daemon
