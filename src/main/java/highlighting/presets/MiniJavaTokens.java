@@ -6,23 +6,29 @@ import java.util.regex.Pattern;
 
 public final class MiniJavaTokens {
 
-  // TODO (Phase I+II: RegexHighlighter/ScanningHighlighter)
-  // TODO: Define the MiniJava tokens used by the highlighters. Each token is a mapping from a
-  // regular expression to a colour (and, if applicable, a specific matching group). The order of
-  // tokens in this list determines their relative priority during highlighting. One example token
-  // definition is provided below; define the remaining tokens in an analogous way.
+  private MiniJavaTokens() {}
 
-  // Basic token set for MiniJava. Extend this list with further tokens as needed (e.g. identifiers,
-  // numeric literals, operators, brackets, whitespace), following the same pattern. Each token is
-  // defined by a regular expression and a colour. Optionally, a specific capturing group within the
-  // pattern can be selected as the "highlighted" region.
   public static List<Token> defaultTokens() {
     return List.of(
-        // Example: string literals (students should define further tokens below)
-        Token.of(Pattern.compile("\"([^\"\\\\]|\\\\.)*\""), MiniJavaColours.STRING_LITERAL_COLOUR)
+        // Wichtig: Javadoc vor normalem Blockkommentar
+        Token.of(Pattern.compile("/\\*\\*[\\s\\S]*?\\*/"), MiniJavaColours.JAVADOC_COMMENT_COLOUR),
+        Token.of(
+            Pattern.compile("/\\*(?!\\*)[\\s\\S]*?\\*/"), MiniJavaColours.BLOCK_COMMENT_COLOUR),
+        Token.of(Pattern.compile("//[^\\r\\n]*"), MiniJavaColours.LINE_COMMENT_COLOUR),
 
-        // TODO: Define additional tokens for MiniJava, e.g. character literals, keywords,
-        // annotations, comments, identifiers, numbers, operators, etc.
-        );
+        // Strings mit einfachen Escape-Sequenzen
+        Token.of(Pattern.compile("\"([^\"\\\\]|\\\\.)*\""), MiniJavaColours.STRING_LITERAL_COLOUR),
+
+        // Ein Character oder eine Escape-Sequenz wie '\n'
+        Token.of(Pattern.compile("'([^'\\\\]|\\\\.)'"), MiniJavaColours.CHAR_LITERAL_COLOUR),
+
+        // Annotationen wie @Override oder @my-annotation
+        Token.of(Pattern.compile("@[A-Za-z][A-Za-z-]*"), MiniJavaColours.ANNOTATION_COLOUR),
+
+        // Keywords nicht als Teil anderer Bezeichner
+        Token.of(
+            Pattern.compile(
+                "(?<![A-Za-z0-9_$])(?:package|import|class|public|private|final|return|null|new)(?![A-Za-z0-9_$])"),
+            MiniJavaColours.KEYWORD_COLOUR));
   }
 }
